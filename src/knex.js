@@ -4,7 +4,7 @@ require("dotenv");
 const knexDB = require("knex")({
   client: "pg",
   version: "7.2",
-  connection: `postgresql://${config.USERNAME}:${config.PASSWORD}:@localhost/knex-practice`,
+  connection: "postgresql://localhost/knex-practice",
 });
 
 //get all items that contain text
@@ -19,16 +19,26 @@ function searchTerm(searchStr) {
 
 function pageNumber(pageNum) {
   const productsPerPage = 10;
-  const offset = productsPerPage * (pageNum - 1)
+  const offset = productsPerPage * (pageNum - 1);
 
-  knexDB('shopping_list')
-    .select('id', 'name', 'price', 'category', 'checked', 'date_added')
+  knexDB("shopping_list")
+    .select("id", "name", "price", "category", "checked", "date_added")
     .limit(productsPerPage)
     .offset(offset)
-    .then(result => console.log(result))
+    .then(result => console.log(result));
 }
 
-searchTerm("Bluffalo Wings");
-pageNumber(2)
 
-console.log(config.USERNAME)
+
+function itemsAfterDate(daysAgo) {
+  knexDB("shopping_list")
+    .select("id", "name", "price", "category", "checked", "date_added")
+    .where("date_added", ">", knexDB.raw("now() - '?? days':: INTERVAL", daysAgo))
+    .then(result => console.log(result));
+}
+
+
+
+// searchTerm("Bluffalo Wings");
+// pageNumber(2);
+itemsAfterDate(2);
