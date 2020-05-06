@@ -31,17 +31,21 @@ describe("Test suite CRUD files", () => {
     },
   ];
 
-  before("establish connection to db", () => {
+  before(() => {
     return testingDB = knex({
       client: "pg",
       connection: process.env.TEST_DB_URL,
     });
   });
 
-  before("truncate table", () => testingDB("shopping_list").truncate());
+  before(() => testingDB("shopping_list").truncate());
+
+  after(() => {
+    return testingDB.destroy();
+  });
 
   context("table is populated", () => {
-    beforeEach("repopulates the table", () => {
+    beforeEach(() => {
       testingDB("shopping_list").truncate();
       return testingDB("shopping_list").insert(testShoppingList);
     });
@@ -52,9 +56,5 @@ describe("Test suite CRUD files", () => {
           expect(actual).to.eql(testShoppingList);
         });
     });
-  });
-
-  after("destroy connection", () => {
-    testingDB.destroy();
   });
 });
