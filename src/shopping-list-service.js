@@ -3,21 +3,18 @@ module.exports = {
     //get all
     return db("shopping_list").select();
   },
-
-  insertShoppingList(db, id) {
+  insertShoppingList(db, newItem) {
     //add item
-    return db("shopping_list").select();
+    //return db("shopping_list").select('*').insert(newItem);
+    return db.insert(newItem).into('shopping_list').returning('*').then(rows => rows[0]);
   },
-
   updateShoppingList(db, id, newItem) {
-   //edit 
-    return db("shopping_list").where({id}).update(newItem)
+    return db("shopping_list").where({id}).update(newItem).returning('*').then(rows => rows[0]);
   },
-
   deleteShoppingListItem(db, id) {
-    return db("shopping_list").where()
+    return db("shopping_list").where({id}).del();
   },
   getById(db, id){
-    return db("shopping_list").select('*').where('id', id).first();
+    return db("shopping_list").select('*').where({id}).first();
   }
 };
